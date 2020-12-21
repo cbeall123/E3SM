@@ -38,6 +38,7 @@ save
 
 public :: &
    radiation_register,    &! registers radiation physics buffer fields
+   radiation_defaultopts  &! set default values of nameslist variables in runtime_opts
    radiation_nextsw_cday, &! calendar day of next radiation calculation
    radiation_do,          &! query which radiation calcs are done this timestep
    radiation_init,        &! calls radini
