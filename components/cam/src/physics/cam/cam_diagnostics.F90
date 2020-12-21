@@ -22,7 +22,6 @@ use phys_control,  only: phys_getopts
 use wv_saturation, only: qsat, qsat_water, svp_ice
 use time_manager,  only: is_first_step
 
-use scamMod,       only: single_column, wfld
 use cam_abortutils,    only: endrun
 
 implicit none
@@ -264,6 +263,7 @@ subroutine diag_init()
    call addfld ('DTENDTH', horiz_only, 'A', 'W/m2',   'Dynamic Tendency of Total (vertically integrated) moist static energy')
    call addfld ('DTENDTQ', horiz_only, 'A', 'kg/m2/s','Dynamic Tendency of Total (vertically integrated) specific humidity')
    call addfld ('RELHUM',(/ 'lev' /), 'A','percent','Relative humidity')
+   
    call addfld ('RHW',(/ 'lev' /), 'A','percent'   ,'Relative humidity with respect to liquid')
    call addfld ('RHI',(/ 'lev' /), 'A','percent'   ,'Relative humidity with respect to ice')
    call addfld ('RHCFMIP',(/ 'lev' /), 'A','percent' ,'Relative humidity with respect to water above 273 K, ice below 273 K')
@@ -273,8 +273,14 @@ subroutine diag_init()
    call addfld ('T500',horiz_only,    'A','K','Temperature at 500 mbar pressure surface')
    call addfld ('T300',horiz_only,    'A','K','Temperature at 300 mbar pressure surface')
    call addfld ('T200',horiz_only,    'A','K','Temperature at 200 mbar pressure surface')
+   call addfld ('T100',horiz_only,    'A','K','Temperature at 100 mbar pressure surface')
+   call addfld ('T50',horiz_only,    'A','K','Temperature at 50 mbar pressure surface')
    call addfld ('Q850',horiz_only,    'A','kg/kg','Specific Humidity at 850 mbar pressure surface')
-   call addfld ('Q200',horiz_only,    'A','kg/kg','Specific Humidity at 700 mbar pressure surface')
+   call addfld ('Q200',horiz_only,    'A','kg/kg','Specific Humidity at 200 mbar pressure surface')
+   call addfld ('Q700',horiz_only,    'A','kg/kg','Specific Humidity at 700 mbar pressure surface')
+   call addfld ('Q500',horiz_only,    'A','kg/kg','Specific Humidity at 500 mbar pressure surface')
+   call addfld ('Q100',horiz_only,    'A','kg/kg','Specific Humidity at 100 mbar pressure surface')
+   call addfld ('Q50',horiz_only,    'A','kg/kg','Specific Humidity at 50 mbar pressure surface')
    call addfld ('U850',horiz_only,    'A','m/s','Zonal wind at 850 mbar pressure surface')
    call addfld ('U250',horiz_only,    'A','m/s','Zonal wind at 250 mbar pressure surface')
    call addfld ('U200',horiz_only,    'A','m/s','Zonal wind at 200 mbar pressure surface')
@@ -1063,11 +1069,7 @@ end subroutine diag_conv_tend_ini
 
 ! Vertical velocity and advection
 
-    if (single_column) then
-       call outfld('OMEGA   ',wfld,    pcols,   lchnk     )
-    else
-       call outfld('OMEGA   ',state%omega,    pcols,   lchnk     )
-    endif
+    call outfld('OMEGA   ',state%omega,    pcols,   lchnk     )
 
 #if (defined BFB_CAM_SCAM_IOP )
     call outfld('omega   ',state%omega,    pcols,   lchnk     )
@@ -1143,6 +1145,30 @@ end subroutine diag_conv_tend_ini
           ftem(:ncol,:) = state%q(:ncol,:,1)/ftem(:ncol,:)*100._r8
           call outfld ('RELHUM  ',ftem    ,pcols   ,lchnk     )
        end if
+!       if (hist_fld_active('RH850')) then
+!          call vertinterp(ncol, pcols, pver, state%pmid, 85000._r8, ,ftem p_surf)
+!          call outfld('RH850    ', p_surf, pcols, lchnk )
+!       end if
+!       if (hist_fld_active('RH700')) then
+!          call vertinterp(ncol, pcols, pver, state%pmid, 70000._r8, ,ftem p_surf)
+!          call outfld('RH700    ', p_surf, pcols, lchnk )
+!       end if
+!       if (hist_fld_active('RH500')) then
+!          call vertinterp(ncol, pcols, pver, state%pmid, 50000._r8, ,ftem p_surf)
+!          call outfld('RH500    ', p_surf, pcols, lchnk )
+!       end if
+!       if (hist_fld_active('RH200')) then
+!          call vertinterp(ncol, pcols, pver, state%pmid, 20000._r8, ,ftem p_surf)
+!          call outfld('RH200    ', p_surf, pcols, lchnk )
+!       end if
+!       if (hist_fld_active('RH100')) then
+!          call vertinterp(ncol, pcols, pver, state%pmid, 10000._r8, ,ftem p_surf)
+!          call outfld('RH100    ', p_surf, pcols, lchnk )
+!       end if
+!       if (hist_fld_active('RH50')) then
+!          call vertinterp(ncol, pcols, pver, state%pmid, 5000._r8, ,ftem p_surf)
+!          call outfld('RH50    ', p_surf, pcols, lchnk )
+!       end if
 
        if (hist_fld_active('RHW') .or. hist_fld_active('RHI') .or. hist_fld_active('RHCFMIP') ) then
 	  
@@ -1209,6 +1235,14 @@ end subroutine diag_conv_tend_ini
        call vertinterp(ncol, pcols, pver, state%pmid, 20000._r8, state%t, p_surf)
        call outfld('T200    ', p_surf, pcols, lchnk )
     end if
+    if (hist_fld_active('T100')) then
+       call vertinterp(ncol, pcols, pver, state%pmid, 10000._r8, state%t, p_surf)
+       call outfld('T100    ', p_surf, pcols, lchnk )
+    end if
+    if (hist_fld_active('T50')) then
+       call vertinterp(ncol, pcols, pver, state%pmid, 5000._r8, state%t, p_surf)
+       call outfld('T50    ', p_surf, pcols, lchnk )
+    end if
     if (hist_fld_active('Q850')) then
        call vertinterp(ncol, pcols, pver, state%pmid, 85000._r8, state%q(1,1,1), p_surf)
        call outfld('Q850    ', p_surf, pcols, lchnk )
@@ -1216,6 +1250,22 @@ end subroutine diag_conv_tend_ini
     if (hist_fld_active('Q200')) then
        call vertinterp(ncol, pcols, pver, state%pmid, 20000._r8, state%q(1,1,1), p_surf)
        call outfld('Q200    ', p_surf, pcols, lchnk )
+    end if
+    if (hist_fld_active('Q700')) then
+       call vertinterp(ncol, pcols, pver, state%pmid, 70000._r8, state%q(1,1,1), p_surf)
+       call outfld('Q700    ', p_surf, pcols, lchnk )
+    end if
+    if (hist_fld_active('Q500')) then
+       call vertinterp(ncol, pcols, pver, state%pmid, 50000._r8, state%q(1,1,1), p_surf)
+       call outfld('Q500    ', p_surf, pcols, lchnk )
+    end if
+    if (hist_fld_active('Q100')) then
+       call vertinterp(ncol, pcols, pver, state%pmid, 10000._r8, state%q(1,1,1), p_surf)
+       call outfld('Q100    ', p_surf, pcols, lchnk )
+    end if
+    if (hist_fld_active('Q50')) then
+       call vertinterp(ncol, pcols, pver, state%pmid, 5000._r8, state%q(1,1,1), p_surf)
+       call outfld('Q50    ', p_surf, pcols, lchnk )
     end if
     if (hist_fld_active('U850')) then
        call vertinterp(ncol, pcols, pver, state%pmid, 85000._r8, state%u, p_surf)
@@ -1583,6 +1633,7 @@ subroutine diag_surf (cam_in, cam_out, ps, trefmxav, trefmnav )
     call outfld('shflx   ',cam_in%shf,   pcols,   lchnk)
     call outfld('lhflx   ',cam_in%lhf,   pcols,   lchnk)
     call outfld('trefht  ',cam_in%tref,  pcols,   lchnk)
+    call outfld('Tg', cam_in%ts, pcols, lchnk)
 #endif
 !
 ! Ouput ocn and ice fractions
