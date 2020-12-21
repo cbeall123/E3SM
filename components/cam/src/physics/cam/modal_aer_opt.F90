@@ -1028,11 +1028,11 @@ subroutine modal_aero_sw(list_idx, state, pbuf, nnite, idxnite, is_cmip6_volc, e
       ! The diagnostics are currently only output for the climate list.  Code mods will
       ! be necessary to provide output for the rad_diag lists.
       if (list_idx == 0) then
-         do i = 1, nnite
-            burden(idxnite(i))  = fillvalue
-            aodmode(idxnite(i)) = fillvalue
-            dustaodmode(idxnite(i)) = fillvalue
-         end do
+!         do i = 1, nnite
+!PMA            burden(idxnite(i))  = fillvalue
+!!            aodmode(idxnite(i)) = fillvalue
+!            dustaodmode(idxnite(i)) = fillvalue
+!         end do
 
          write(outname,'(a,i1)') 'BURDEN', m
          call outfld(trim(outname), burden, pcols, lchnk)
@@ -1078,12 +1078,12 @@ subroutine modal_aero_sw(list_idx, state, pbuf, nnite, idxnite, is_cmip6_volc, e
 
    ! Output visible band diagnostics for quantities summed over the modes
    ! These fields are put out for diagnostic lists as well as the climate list.
-   do i = 1, nnite
-      extinct(idxnite(i),:) = fillvalue
-      absorb(idxnite(i),:)  = fillvalue
-      aodvis(idxnite(i))    = fillvalue
-      aodabs(idxnite(i))    = fillvalue
-   end do
+!PMA   do i = 1, nnite
+!      extinct(idxnite(i),:) = fillvalue
+!      absorb(idxnite(i),:)  = fillvalue
+!      aodvis(idxnite(i))    = fillvalue
+!      aodabs(idxnite(i))    = fillvalue
+!   end do
 
    call outfld('EXTINCT'//diag(list_idx),  extinct, pcols, lchnk)
    call outfld('tropopause_m', tropopause_m, pcols, lchnk)
@@ -1101,41 +1101,41 @@ subroutine modal_aero_sw(list_idx, state, pbuf, nnite, idxnite, is_cmip6_volc, e
          endif
       end do
 
-      do i = 1, nnite
-         ssavis(idxnite(i))     = fillvalue
+!PMA      do i = 1, nnite
+!         ssavis(idxnite(i))     = fillvalue
 
-         aoduv(idxnite(i))      = fillvalue
-         aodnir(idxnite(i))     = fillvalue
+!         aoduv(idxnite(i))      = fillvalue
+!         aodnir(idxnite(i))     = fillvalue
 
-         burdendust(idxnite(i)) = fillvalue
-         burdenso4(idxnite(i))  = fillvalue
-         burdenpom(idxnite(i))  = fillvalue
-         burdensoa(idxnite(i))  = fillvalue
-         burdenbc(idxnite(i))   = fillvalue
-         burdenseasalt(idxnite(i)) = fillvalue
-#if ( defined MODAL_AERO_4MODE_MOM )
-         burdenmom(idxnite(i)) = fillvalue
-#elif ( defined MODAL_AERO_9MODE )
-         burdenpoly(idxnite(i)) = fillvalue
-         burdenprot(idxnite(i)) = fillvalue
-         burdenlip(idxnite(i)) = fillvalue
-#endif
+!         burdendust(idxnite(i)) = fillvalue
+!         burdenso4(idxnite(i))  = fillvalue
+!         burdenpom(idxnite(i))  = fillvalue
+!         burdensoa(idxnite(i))  = fillvalue
+!         burdenbc(idxnite(i))   = fillvalue
+!         burdenseasalt(idxnite(i)) = fillvalue
+!#if ( defined MODAL_AERO_4MODE_MOM )
+!         burdenmom(idxnite(i)) = fillvalue
+!#elif ( defined MODAL_AERO_9MODE )
+!         burdenpoly(idxnite(i)) = fillvalue
+!         burdenprot(idxnite(i)) = fillvalue
+!         burdenlip(idxnite(i)) = fillvalue
+!#endif
 
-         aodabsbc(idxnite(i))   = fillvalue
+!         aodabsbc(idxnite(i))   = fillvalue
 
-         dustaod(idxnite(i))    = fillvalue
-         so4aod(idxnite(i))     = fillvalue
-         pomaod(idxnite(i))     = fillvalue
-         soaaod(idxnite(i))     = fillvalue
-         bcaod(idxnite(i))      = fillvalue
-#if ( defined MODAL_AERO_4MODE_MOM )
-         momaod(idxnite(i)) = fillvalue
-#elif ( defined MODAL_AERO_9MODE )
-         polyaod(idxnite(i)) = fillvalue
-         protaod(idxnite(i)) = fillvalue
-         lipaod(idxnite(i)) = fillvalue
-#endif
-       end do
+!         dustaod(idxnite(i))    = fillvalue
+!         so4aod(idxnite(i))     = fillvalue
+!         pomaod(idxnite(i))     = fillvalue
+!         soaaod(idxnite(i))     = fillvalue
+!         bcaod(idxnite(i))      = fillvalue
+!#if ( defined MODAL_AERO_4MODE_MOM )
+!         momaod(idxnite(i)) = fillvalue
+!#elif ( defined MODAL_AERO_9MODE )
+!         polyaod(idxnite(i)) = fillvalue
+!         protaod(idxnite(i)) = fillvalue
+!         lipaod(idxnite(i)) = fillvalue
+!#endif
+!       end do
 
       call outfld('SSAVIS',        ssavis,        pcols, lchnk)
 
